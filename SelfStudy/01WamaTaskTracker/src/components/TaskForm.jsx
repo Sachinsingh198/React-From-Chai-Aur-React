@@ -1,14 +1,28 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
-function TaskForm({onAddTask}) {
+function TaskForm({onAddTask, editingTask, onUpdateTask}) {
 
     const [userInput, setUserInput] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
         onAddTask(userInput);
+
+        if(editingTask){
+            onUpdateTask(editingTask.id, userInput);
+        }
+        else {
+            onAddTask(userInput);
+        }
+
         setUserInput("");
     }
+
+    useEffect(() => {
+        if(editingTask){
+            setUserInput(editingTask.text)
+        }
+    }, [editingTask]);
 
     return (
         <>
@@ -27,7 +41,7 @@ function TaskForm({onAddTask}) {
                     className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
                     type="submit"
                 >
-                    Add Task
+                    {editingTask ? "Update Task" : "Add Task"}
                 </button>
             </form>
         </>
