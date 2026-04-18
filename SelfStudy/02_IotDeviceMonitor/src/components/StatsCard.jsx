@@ -10,6 +10,7 @@ const StatsCard = ({label, value, icon : Icon, colorClass}) => {
             <div>
                 <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{label}</p>
                 <p className="text-xl font-black text-white mt-1">{value}</p>
+                <div>"Hello</div>
             </div>
 
         </div>
