@@ -36,15 +36,41 @@ function App() {
     }, [isLive]);
 
 
-    const [bins, setBins] = useState([
-        { id: 1, location: "Main Gate", fillLevel: 45, battery: 90, temp: 24 },
-        { id: 2, location: "Food Court", fillLevel: 88, battery: 15, temp: 28 },
-        { id: 3, location: "Admin Block", fillLevel: 12, battery: 75, temp: 22 },
-        { id: 4, location: "Admin Calc", fillLevel: 22, battery: 26, temp: 22 }
-    ]);
+    const [bins, setBins] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    // Calculate total bins
-    const totalBins = bins.length;
+    const fetchBins = async () => {
+        try{
+            setIsLoading(true);
+            const response = await fetch("https://dummyjson.com/products/category/smartphones");
+            if(!response.ok){
+                throw new Error("Network response not ok");
+            }
+
+            const data = await response.json();
+
+            const formattedData = data.products.map(item => ({
+                id : item.id,
+                location : item.title,
+                fillLevel : Math.floor(Math.random() * 100),
+                battery : item.stock,
+                temp : Math.floor(Math.random() * 100),
+            }));
+
+            setBins(formattedData)
+            setError(null);
+        } catch (error) {
+            setError(error.message)
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchBins()
+    }, []);
+
 
 // Calculate how many bins need action (Fill Level > 80)
     const actionNeeded = bins.filter(bin => bin.fillLevel >= 80).length;
@@ -76,21 +102,14 @@ function App() {
                       colorClass="text-emerald-400"
                   />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                  {
-                      bins.map((bin) => (
-                          <SensorCard
-                            key = {bin.id}
-                            location={bin.location}
-                            fillLevel={bin.fillLevel}
-                            battery={bin.battery}
-                            temp={bin.temp}
-                            isLive = {isLive}
-                          />
-                      ))
-                  }
-              </div>
+              {isLoading && <p className="text-sky-400 animate-pulse">Connecting to IoT Cloud...</p>}
+              {error && <p className="text-red-400">Error: {error}</p>}
 
+              {!isLoading && !error && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {bins.map(bin => <SensorCard key={bin.id} {...bin} isLive={isLive} />)}
+                  </div>
+              )}
 
 
           </div>
