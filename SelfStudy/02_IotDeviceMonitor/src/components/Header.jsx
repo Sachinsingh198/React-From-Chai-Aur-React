@@ -1,7 +1,7 @@
 import React from 'react';
 import {RefreshCcw} from "lucide-react";
 
-const Header = ({isLive}) => {
+const Header = ({isLive, toggleTracking}) => {
     return (
         <header
             className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4 p-6"
@@ -20,7 +20,7 @@ const Header = ({isLive}) => {
             </div>
 
             {/* Status Indicator Area */}
-            <div className="flex items-center bg-slate-800 gap-2 rounded-full p-2 pr-6 border  border-slate-400 shadow-inner cursor-pointer">
+            <button onClick={toggleTracking} className="flex items-center bg-slate-800 gap-2 rounded-full p-2 pr-6 border  border-slate-400 shadow-inner cursor-pointer">
                 {/* Dynamic Pulse Dot: Green if Live, Red/Gray if stopped */}
                 <div className={`w-3 h-3 rounded-full ml-2 ${isLive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-600'}`}>
 
@@ -29,7 +29,7 @@ const Header = ({isLive}) => {
                 <span className="text-sm font-bold uppercase tracking-wider text-slate-200">
                      {isLive ? "System Live" : "System Standby"}
                 </span>
-            </div>
+            </button>
         </header>
     )
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Battery, Thermometer, Trash2, Wifi} from 'lucide-react';
 
-const SensorCard = ({location, fillLevel, temp, battery}) => {
+const SensorCard = ({location, fillLevel, temp, battery, isLive}) => {
     const isCritical = fillLevel >= 80;
     const isWarning = fillLevel >= 50 && fillLevel < 80;
 
@@ -16,9 +16,11 @@ const SensorCard = ({location, fillLevel, temp, battery}) => {
                     <Trash2 size = {48} className="text-green-400"/>
                 </div>
 
-                <div className="flex gap-4">
-                    <Wifi className="text-green-400"/>
-                    <span className="text-slate-400 font-medium">Connected</span>
+                <div className="flex gap-2 items-center">
+                    <Wifi size={20} className={isLive ? "text-emerald-400" : "text-slate-500"} />
+                    <span className={`text-xs font-bold uppercase ${isLive ? "text-emerald-500/80" :"text-slate-500" }`}>
+                        {isLive ? "Online" : "Offline"}
+                    </span>
                 </div>
             </div>
 
