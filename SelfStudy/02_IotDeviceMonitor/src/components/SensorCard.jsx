@@ -1,16 +1,23 @@
 import React from 'react';
-import {Battery, Thermometer, Trash2, Wifi} from 'lucide-react';
+import {Battery, Thermometer, Trash2, Wifi, X} from 'lucide-react';
 
-const SensorCard = ({location, fillLevel, temp, battery, isLive}) => {
+const SensorCard = ({id, location, fillLevel, temp, battery, isLive, ondelete}) => {
     const isCritical = fillLevel >= 80;
     const isWarning = fillLevel >= 50 && fillLevel < 80;
 
     const barColor = isCritical ? 'bg-red-500' : isWarning ? 'bg-amber-500' : "bg-sky-500";
 
     return (
-        <div className="bg-slate-800/50 rounded-2xl border-slate-700 shadow-xl p-4 ">
+        <div className="relative bg-slate-800/50 rounded-2xl border-slate-700 shadow-xl p-4 ">
             {/*Title */}
 
+            {/* Delete Button */}
+            <button
+                className="absolute top-4 right-4 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                onClick={() => ondelete(id)}
+            >
+                <X size={18}/>
+            </button>
             <div className="flex justify-between">
                 <div className="bg-slate-500 p-4 rounded-2xl border-slate-300 shadow-2xlw">
                     <Trash2 size = {48} className="text-green-400"/>
@@ -58,7 +65,6 @@ const SensorCard = ({location, fillLevel, temp, battery, isLive}) => {
                         <span className="text-sm font-medium">{temp}</span>
                     </div>
                 </div>
-
 
             </div>
         </div>

@@ -39,6 +39,7 @@ function App() {
     const [bins, setBins] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [newLocation, setNewLocation] = useState("");
 
     const fetchBins = async () => {
         try{
@@ -71,6 +72,25 @@ function App() {
         fetchBins()
     }, []);
 
+    const handleAddBin = () => {
+        if(newLocation.trim() === "") return;
+        const newBin = {
+            id : Date.now(),
+            location : newLocation,
+            fillLevel: 0,
+            battery: 100,
+            temp: 20
+        }
+
+        setBins([...bins, newBin])
+        setNewLocation("");
+    }
+
+    const deleteBin = (id) => {
+        const updatedBins = bins.filter(bin => bin.id !== id);
+        setBins(updatedBins)
+    }
+
 
 // Calculate how many bins need action (Fill Level > 80)
     const actionNeeded = bins.filter(bin => bin.fillLevel >= 80).length;
@@ -85,29 +105,55 @@ function App() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                   <StatsCard
                       label="Total Bins"
-                      value="03"
+                      value={bins.length} // Dynamic count
                       icon={Trash2}
                       colorClass="text-sky-400"
                   />
                   <StatsCard
                       label="Action Needed"
-                      value="01"
+                      value={actionNeeded} // Dynamic count from your filter logic
                       icon={AlertTriangle}
                       colorClass="text-amber-400"
                   />
                   <StatsCard
                       label="Network"
-                      value="Optimal"
+                      value={isSystemHealthy ? "Optimal" : "Low Battery"} // Dynamic status
                       icon={Wifi}
-                      colorClass="text-emerald-400"
+                      colorClass={isSystemHealthy ? "text-emerald-400" : "text-red-400"}
                   />
+              </div>
+              <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 mb-10">
+                  <h2 className="text-white font-bold mb-4">Register New IoT Bin</h2>
+                  <div className="flex gap-4">
+                      <input
+                          type="text"
+                          placeholder="Enter Bin Location (e.g. Library)"
+                          className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                          // 1. Bind value to state
+                          value={newLocation}
+                          // 2. Update state on every keystroke
+                          onChange={(e) => setNewLocation(e.target.value)}
+                          onKeyDown={(e) => {
+                              if(e.key === "Enter"){
+                                  handleAddBin();
+                              }
+                          }}
+                      />
+                      <button
+                          className="bg-sky-500 hover:bg-sky-400 text-white font-bold px-6 rounded-lg transition-colors cursor-pointer"
+                          onClick={handleAddBin}
+                      >
+                          Add Bin
+                      </button>
+                  </div>
               </div>
               {isLoading && <p className="text-sky-400 animate-pulse">Connecting to IoT Cloud...</p>}
               {error && <p className="text-red-400">Error: {error}</p>}
 
               {!isLoading && !error && (
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      {bins.map(bin => <SensorCard key={bin.id} {...bin} isLive={isLive} />)}
+                      {bins.map(bin => <SensorCard key={bin.id} id={bin.id} {...bin} isLive={isLive} ondelete = {deleteBin} />)}
                   </div>
               )}
 
