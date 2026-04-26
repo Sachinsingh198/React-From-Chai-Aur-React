@@ -4,7 +4,7 @@ import {RefreshCcw} from "lucide-react";
 const Header = ({isLive, toggleTracking}) => {
     return (
         <header
-            className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4 p-6"
+            className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md flex flex-col md:flex-row justify-between items-center mb-12 gap-4 p-6"
         >
             {/* Title Group */}
             <div>
